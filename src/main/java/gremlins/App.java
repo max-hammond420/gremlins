@@ -11,7 +11,7 @@ import java.io.*;
 
 public class App extends PApplet {
 
-    public static final int WIDTH = 720;
+	public static final int WIDTH = 720;
     public static final int HEIGHT = 720;
     public static final int SPRITESIZE = 20;
     public static final int BOTTOMBAR = 60;
@@ -22,8 +22,13 @@ public class App extends PApplet {
 
     public String configPath;
     
-    public PImage brickwall;
     public PImage stonewall;
+    public PImage brickwall;
+
+    public PImage gremlin;
+    public PImage slime;
+    public PImage fireball;
+
 
     public App() {
         this.configPath = "config.json";
@@ -45,9 +50,9 @@ public class App extends PApplet {
         // Load images during setup
         this.stonewall = loadImage(this.getClass().getResource("stonewall.png").getPath().replace("%20", ""));
         this.brickwall = loadImage(this.getClass().getResource("brickwall.png").getPath().replace("%20", ""));
-        //this.gremlin = loadImage(this.getClass().getResource("gremlin.png").getPath().replace("%20", ""));
-        //this.slime = loadImage(this.getClass().getResource("slime.png").getPath().replace("%20", ""));
-        //this.fireball = loadImage(this.getClass().getResource("fireball.png").getPath().replace("%20", ""));
+        this.gremlin = loadImage(this.getClass().getResource("gremlin.png").getPath().replace("%20", ""));
+        this.slime = loadImage(this.getClass().getResource("slime.png").getPath().replace("%20", ""));
+        this.fireball = loadImage(this.getClass().getResource("fireball.png").getPath().replace("%20", ""));
         
 
         JSONObject conf = loadJSONObject(new File(this.configPath));
@@ -72,9 +77,9 @@ public class App extends PApplet {
 
     /**
      * Draw all elements in the game by current frame. 
-	 */
+	  */
     public void draw() {
-        
+
     }
 
     public static void main(String[] args) {
