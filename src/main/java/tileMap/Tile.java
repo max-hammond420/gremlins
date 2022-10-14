@@ -1,35 +1,48 @@
 package tileMap; 
 
-import java.util.Scanner;
+import processing.core.PImage;
 
-/* Tile class
- * @param
- * @param
- */
 public class Tile {
 
-    private String name;
+    private char name;
     private boolean isBreakable;
     private boolean isHit = false;
+    private PImage image;
 
     /*
      * Constructor method of the Tile public class Tile 
      *
      * @param name name of the Tile
      */
-    Tile(String name, boolean isBreakable) {
+    public Tile(char name, PImage image) {
         this.name = name;
+        this.image = image;
     }
 
-    public String get_name() {
+    public String toString() {
+        String s = "" + name;
+        return s;
+    }
+
+    public char get_name() {
         return this.name;
     }
 
+    public PImage get_image() {
+        return this.image;
+    }
+
     public boolean isBreakable() {
-        if (name == "brick") {
+        if (name == 'X') {
             isBreakable = true;
         }
-        else if (name == "stone") {
+        else if (name == 'B') {
+            isBreakable = false;
+        }
+        else if (name == 'W') {
+            isBreakable = false;
+        }
+        else if (name == 'G') {
             isBreakable = false;
         }
         return isBreakable;
@@ -41,5 +54,9 @@ public class Tile {
 
     public void hit() {
         this.isHit = true;
+    }
+
+    public PImage getImage() {
+        return this.image;
     }
 }
