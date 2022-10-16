@@ -1,4 +1,5 @@
 gremlins_game.mp4
+bin/*
 
 .gradle
 **/build/
