@@ -2,6 +2,7 @@ package tileMap;
 
 import java.io.*;
 import java.util.*;
+import gremlins.App;
 
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -24,9 +25,12 @@ public class TileMap {
         this.f = f;      
         this.stonewall = stonewall;
         this.brickwall = brickwall;
+
+        getCharMap();
+        getTileMap(map);
     }
 
-    public Tile[][] get_tileMap() {
+    public char[][] getCharMap() {
         
         map = new char[33][36];
 
@@ -53,6 +57,10 @@ public class TileMap {
             e.printStackTrace();
         }
 
+        return map;
+    }
+
+    public Tile[][] getTileMap(char[][] map) {
 
         // Convert chars in map array to Tile objects in a new array
         // and returns
@@ -72,15 +80,17 @@ public class TileMap {
                 mapObj[i][j] = new Tile(map[i][j], image);
             }
         }
-        // System.out.println(Arrays.deepToString(mapObj));
+
         return mapObj;
     }
 
-    public void draw() {
+    public void draw(App app) {
+
         for (int i = 0; i < mapObj.length; i++) {
-            for (int j = 0; i < mapObj[i].length; j++) {
+            for (int j = 0; j < mapObj[i].length; j++) {
                 if (mapObj[i][j].getImage() != null) {
-                    // image(mapObj[i][j].getImage(), i, j);
+                    app.image(mapObj[i][j].getImage(), j*20, i*20);
+                    
                 }
             }
         }

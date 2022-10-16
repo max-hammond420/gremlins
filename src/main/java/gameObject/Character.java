@@ -12,13 +12,27 @@ import processing.data.JSONArray;
 public class Character {
 
     private PImage character;
-    protected Tile[][] currentMap;
+    private char[][] charMap;
+    //protected Tile[][] tileMap;
+    private char name;
+    
 
-    public Character(Tile[][] currentMap) {
-        this.currentMap = currentMap;
+    public Character(char name, PImage character, char[][] charMap) {
+        this.name = name;
+        this.character = character;
+        this.charMap = charMap;
+        // this.tileMap = tileMap;
     }
 
-    public Tile[][] drawCharacter() {
+    public void drawCharacter(App app) {
+
+        for (int i = 0; i < charMap.length; i++) {
+            for (int j = 0; j < charMap[i].length; j++) {
+                if (charMap[i][j] == this.name) {
+                    app.image(character, j*20, i*20);
+                }
+            }
+        }
     }
 }
 

@@ -24,11 +24,11 @@ public class Tile {
         return s;
     }
 
-    public char get_name() {
+    public char getName() {
         return this.name;
     }
 
-    public PImage get_image() {
+    public PImage getImage() {
         return this.image;
     }
 
@@ -54,9 +54,5 @@ public class Tile {
 
     public void hit() {
         this.isHit = true;
-    }
-
-    public PImage getImage() {
-        return this.image;
     }
 }
