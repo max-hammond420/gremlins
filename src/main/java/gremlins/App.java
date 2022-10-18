@@ -1,7 +1,11 @@
 package gremlins;
 
 import tileMap.*;
+// import gameObject.*;
 import gameObject.*;
+import gameObject.Character;
+import gameObject.Enemy;
+import gameObject.Player;
 
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -30,15 +34,19 @@ public class App extends PApplet {
     public PImage gremlin;
     public PImage slime;
     public PImage fireball;
-    public PImage wizard0;
-    public PImage wizard1;
-    public PImage wizard2;
-    public PImage wizard3;
 
-    public TileMap map1;
-    public TileMap map2;
-    private char[][] currentMapChar;
+    public PImage wizardLeft;
+    public PImage wizardRight;
+    public PImage wizardUp;
+    public PImage wizardDown;
+
+    private TileMap map1;
+    private TileMap map2;
+    private char[][] currentCharMap;
     private TileMap currentMap;
+
+    private Player player;
+    private Character gremlins;
 
 
     public App() {
@@ -64,10 +72,11 @@ public class App extends PApplet {
         this.gremlin = loadImage(this.getClass().getResource("gremlin.png").getPath().replace("%20", ""));
         this.slime = loadImage(this.getClass().getResource("slime.png").getPath().replace("%20", ""));
         this.fireball = loadImage(this.getClass().getResource("fireball.png").getPath().replace("%20", ""));
-        this.wizard0 = loadImage(this.getClass().getResource("wizard0.png").getPath().replace("%20", ""));
-        this.wizard1 = loadImage(this.getClass().getResource("wizard1.png").getPath().replace("%20", ""));
-        this.wizard2 = loadImage(this.getClass().getResource("wizard2.png").getPath().replace("%20", ""));
-        this.wizard3 = loadImage(this.getClass().getResource("wizard2.png").getPath().replace("%20", ""));
+
+        this.wizardRight = loadImage(this.getClass().getResource("wizard1.png").getPath().replace("%20", ""));
+        this.wizardLeft = loadImage(this.getClass().getResource("wizard0.png").getPath().replace("%20", ""));
+        this.wizardUp = loadImage(this.getClass().getResource("wizard2.png").getPath().replace("%20", ""));
+        this.wizardDown = loadImage(this.getClass().getResource("wizard3.png").getPath().replace("%20", ""));
         
 
         JSONObject conf = loadJSONObject(new File(this.configPath));
@@ -85,26 +94,36 @@ public class App extends PApplet {
         // currentMapChar = map2.getTileMap();
         // currentMap = map2.getTileMapObj(currentMapChar);
 
-        // System.out.println(Arrays.deepToString(currentMap));
+        currentCharMap = currentMap.getCharMap();
 
-        // Load the players and enemies
-        Player = new Character('W', wizard0, currentMap.getCharMap());
+        // Load the wizard
+        player = new Player('W', currentMap.getCharMap(), fireball, wizardRight, wizardLeft,
+                wizardUp, wizardDown);
+
+        gremlins = new Enemy('G', currentMap.getCharMap(), slime, gremlin);
+
+        // Load the gremlins 
     }
 
     /**
      * Receive key pressed signal from the keyboard.
     */
     public void keyPressed(){
+        
+        if (keyCode == 39) { // right
+            player.move(this, 'r',  wizardRight);
+        } else if (keyCode == 37) { // left
+            player.move(this, 'l', wizardLeft); 
+        } else if (keyCode == 40) { // up
+            player.move(this, 'u', wizardUp); 
+        } else if (keyCode == 38) { // down
+            player.move(this, 'd', wizardDown); 
+        } else if (keyCode == ' ') {
+            // do later, supposed to shoot
+        }
+        System.out.println("keyCode: " + keyCode);
 
     }
-    
-    /**
-     * Receive key released signal from the keyboard.
-    */
-    public void keyReleased(){
-
-    }
-
 
     /**
      * Draw all elements in the game by current frame. 
@@ -114,17 +133,10 @@ public class App extends PApplet {
         background(200, 157, 124);
        
         // Draw map
-        /*
-        for (int i = 0; i < currentMap.length; i++) {
-            for (int j = 0; j < currentMap[i].length; j++) {
-                if (currentMap[i][j].getImage() != null) {
-                    image(currentMap[i][j].getImage(), j*20, i*20);
-                } 
-            }
-        }
-        */
 
         currentMap.draw(this);
+        player.draw(this);
+        gremlins.draw(this);
 
 
         //for (int i = 0;

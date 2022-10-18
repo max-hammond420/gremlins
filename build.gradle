@@ -53,3 +53,8 @@ jar {
         configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
     }
 }
+
+task (example, type:Exec){
+   commandLine 'bash'
+   standardInput = System.in
+}
