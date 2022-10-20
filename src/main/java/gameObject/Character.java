@@ -2,6 +2,7 @@ package gameObject;
 
 import tileMap.*;
 import gremlins.*;
+import gameObject.*;
 
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -18,12 +19,20 @@ public class Character {
     private char name;
     private char direction;
 
-    int dirVert;
-    int dirHor;
+    private int dirVert;
+    private int dirHor;
 
-    int playerX;
-    int playerY;
-    
+    private int playerX;
+    private int playerY;
+
+    private int speed = 2;
+    private int shootSpeed = 4;
+    private int xVel;
+    private int yVel;
+
+    private boolean released = false;
+    private boolean xDir = false;
+    private boolean yDir = false;
 
     public Character(char name, char[][] charMap, PImage projectile, PImage character) {
         this.name = name;
@@ -31,62 +40,153 @@ public class Character {
 
         this.character = character;
         this.projectile = projectile;
+
+        getCoords();
     }
 
-    public void draw(App app) {
+    public char[][] getCharMap() { return this.charMap; }
 
+    public int getPlayerX() { return this.playerX; }
+
+    public int getPlayerY() { return this.playerY; }
+
+    public char getDirection() { return this.direction; }
+
+    public void getCoords() {
         for (int i = 0; i < charMap.length; i++) {
             for (int j = 0; j < charMap[i].length; j++) {
                 if (charMap[i][j] == this.name) {
-                    app.image(character, j*20, i*20);
-                    playerX = j;
-                    playerY = i;
+                    playerX = j*20;
+                    playerY = i*20;
                 }
             }
         }
-
     }
 
-    public boolean checkMove(char direction, int playerX, int playerY) {
-        if (direction == 'u') {
-            dirVert = 1;
-        } else if (direction == 'd') {
-            dirVert = -1;
-        } else if (direction == 'l') {
-            dirHor = -1;
-        } else if (direction == 'r') {
-            dirHor = 1;
+    public void draw(App app, int playerX, int playerY) {
+        app.image(character, playerX, playerY);
+    }
+
+    public void right(PImage newImage) {
+        if (!yDir) {
+            xVel = speed;
+            yVel = 0;
+            direction = 'r';
+            character = newImage;
+            xDir = true;
         }
-        if (charMap[playerY+dirVert][playerX+dirHor] != ' ') {
+    }
+
+    public void left(PImage newImage) {
+        if (!yDir) {
+            xVel = -speed;
+            yVel = 0;
+            direction = 'l';
+            character = newImage;
+            xDir = true;
+        }
+    }
+
+    public void up(PImage newImage) {
+        if (!xDir) {
+            yVel = -speed;
+            xVel = 0;
+            direction = 'u';
+            character = newImage;
+            yDir = true;
+        }
+    }
+
+    public void down(PImage newImage) {
+        if (!xDir) {
+            yVel = speed;
+            xVel = 0;
+            direction = 'd';
+            character = newImage;
+            yDir = true;
+        }
+    }
+
+    public void stop() {
+        xVel = 0;
+        yVel = 0;
+        direction = ' ';
+    }
+
+    public void release() {
+        released = true;
+    }
+
+    public boolean validMove() {
+        int xDiff = 0;
+        int yDiff = 0;
+        if (xVel != 0) {
+            if (xVel < 0) {
+                xDiff = -1;
+            } else {
+                xDiff = 1;
+            }
+        } else if (yVel != 0) {
+            if (yVel < 0) {
+                yDiff = -1;
+            } else {
+                yDiff = 1;
+            }
+        }
+        int y = (playerY / 20) + yDiff;
+        int x = (playerX / 20) + xDiff;
+        // System.out.println(charMap[y][x]);
+        if (charMap[y][x] == 'X' || charMap[y][x] == 'B') {
             return false;
         }
         return true;
     }
 
-    public void move(App app, char direction, PImage newImage) {
-        // get x and y coords of the player
-        System.out.println("Player X: " + playerX);
-        System.out.println("Player Y: " + playerY);
-        System.out.println(checkMove(direction, playerX, playerY));
-        System.out.println();
+    public boolean checkCenter() {
+        if (playerX % 20 == 0 && playerY % 20 == 0) {
+            return true;
+        }
+        return false;
+    }
 
-        // Check if valid move
-        if (checkMove(direction, playerX, playerY)) {
-            charMap[playerY][playerX] = ' ';
-            if (direction == 'u') {
-                playerY++;
-            } else if (direction == 'd') {
-                playerY--;
-            } else if (direction == 'l') {
-                playerX--;
-            } else if (direction == 'r') {
-                playerX++;
+    public boolean shoot() {
+        return true;
+    }
+
+    public void tick(App app, int i) {
+        i = i%60;
+
+        boolean correctMove = checkCenter();
+        // System.out.println(correctMove);
+
+        if (released) {
+            if (correctMove) {
+                stop();
+                released = false;
+                yDir = false;
+                xDir = false;
             }
         }
-        charMap[playerY][playerX] = name;
-        character = newImage;
-        dirVert = 0;
-        dirHor = 0;
+        if (correctMove) {
+            if (!validMove()) {
+                yDir = false;
+                xDir = false;
+            }
+        }
+
+        if (yDir) {
+            playerY += yVel;
+        }
+        if (xDir) {
+            playerX += xVel;
+        }
+
+        draw(app, playerX, playerY);
+
+        boolean shoot = shoot();
+        if (shoot) {
+            Shoot fireball = new Shoot(projectile, direction, playerX, playerY);
+            fireball.tick(app);
+        }
     }
 }
-

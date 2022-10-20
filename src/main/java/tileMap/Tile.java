@@ -1,4 +1,4 @@
-package tileMap; 
+package tileMap;
 
 import processing.core.PImage;
 
@@ -9,8 +9,8 @@ public class Tile {
     private boolean isHit = false;
     private PImage image;
 
-    /*
-     * Constructor method of the Tile public class Tile 
+    /**
+     * Constructor method of the Tile public class Tile
      *
      * @param name name of the Tile
      */

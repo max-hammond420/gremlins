@@ -3,6 +3,7 @@ package gremlins;
 import tileMap.*;
 // import gameObject.*;
 import gameObject.*;
+
 import gameObject.Character;
 import gameObject.Enemy;
 import gameObject.Player;
@@ -11,6 +12,7 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.data.JSONObject;
 import processing.data.JSONArray;
+import processing.event.KeyEvent;
 
 import java.util.*;
 import java.io.*;
@@ -28,7 +30,7 @@ public class App extends PApplet {
     public static final Random randomGenerator = new Random();
 
     public String configPath;
-    
+
     public PImage stonewall;
     public PImage brickwall;
     public PImage gremlin;
@@ -45,9 +47,11 @@ public class App extends PApplet {
     private char[][] currentCharMap;
     private TileMap currentMap;
 
-    private Player player;
+    private Character player;
     private Character gremlins;
+    private Character[] gremlinss;
 
+    int i = 0;
 
     public App() {
         this.configPath = "config.json";
@@ -77,7 +81,7 @@ public class App extends PApplet {
         this.wizardLeft = loadImage(this.getClass().getResource("wizard0.png").getPath().replace("%20", ""));
         this.wizardUp = loadImage(this.getClass().getResource("wizard2.png").getPath().replace("%20", ""));
         this.wizardDown = loadImage(this.getClass().getResource("wizard3.png").getPath().replace("%20", ""));
-        
+
 
         JSONObject conf = loadJSONObject(new File(this.configPath));
 
@@ -97,50 +101,62 @@ public class App extends PApplet {
         currentCharMap = currentMap.getCharMap();
 
         // Load the wizard
-        player = new Player('W', currentMap.getCharMap(), fireball, wizardRight, wizardLeft,
-                wizardUp, wizardDown);
+        player = new Character('W', currentCharMap, fireball, wizardRight);
 
-        gremlins = new Enemy('G', currentMap.getCharMap(), slime, gremlin);
+        gremlins = new Enemy('G',currentCharMap, slime, gremlin);
 
-        // Load the gremlins 
+
+        // Load the gremlins
     }
 
     /**
      * Receive key pressed signal from the keyboard.
     */
-    public void keyPressed(){
-        
-        if (keyCode == 39) { // right
-            player.move(this, 'r',  wizardRight);
-        } else if (keyCode == 37) { // left
-            player.move(this, 'l', wizardLeft); 
-        } else if (keyCode == 40) { // up
-            player.move(this, 'u', wizardUp); 
-        } else if (keyCode == 38) { // down
-            player.move(this, 'd', wizardDown); 
-        } else if (keyCode == ' ') {
-            // do later, supposed to shoot
-        }
-        System.out.println("keyCode: " + keyCode);
+    public void keyPressed(KeyEvent e){
 
+        int key = e.getKeyCode();
+
+        if (key == 39) { // right
+            player.right(wizardRight);
+        } else if (key == 37) { // left
+            player.left(wizardLeft);
+        } else if (key == 38) { // up
+            player.up(wizardUp);
+        } else if (key == 40) { // down
+            player.down(wizardDown);
+        } else if (key == ' ') {
+            player.shoot();
+        }
+    }
+
+    public void keyReleased(KeyEvent e) {
+        int key = e.getKeyCode();
+        if (key == 37 || key == 38 || key == 39 || key == 40) {
+            player.release();
+        }
     }
 
     /**
-     * Draw all elements in the game by current frame. 
+     * Draw all elements in the game by current frame.
 	  */
     public void draw() {
         // set background colour
         background(200, 157, 124);
-       
+
+        textSize(20);
+        text("Lives:", 5, 700);
+        image(wizardLeft, 70,685);
+        image(wizardLeft, 90, 685);
+        image(wizardLeft, 110, 685);
+
+
         // Draw map
 
         currentMap.draw(this);
-        player.draw(this);
-        gremlins.draw(this);
+        player.tick(this, i);
+        // gremlins.draw(this);
 
-
-        //for (int i = 0;
-        
+        i++;
     }
 
     public static void main(String[] args) {

@@ -22,7 +22,7 @@ public class TileMap {
     public PImage brickwall;
 
     public TileMap(String f, PImage stonewall, PImage brickwall) {
-        this.f = f;      
+        this.f = f;
         this.stonewall = stonewall;
         this.brickwall = brickwall;
 
@@ -31,19 +31,19 @@ public class TileMap {
     }
 
     public char[][] getCharMap() {
-        
+
         map = new char[33][36];
 
         try {
             // Open file
             File file = new File(this.f);
-            Scanner sc = new Scanner(file); 
+            Scanner sc = new Scanner(file);
 
             int i = 0;
             // Iterate over text file, and convert it to a char array
             while (sc.hasNextLine()) {
                 String line = sc.nextLine();
-                
+
                 for (int j = 0; j < line.length(); j++) {
                     map[i][j] = line.charAt(j);
                 }
@@ -90,9 +90,12 @@ public class TileMap {
             for (int j = 0; j < mapObj[i].length; j++) {
                 if (mapObj[i][j].getImage() != null) {
                     app.image(mapObj[i][j].getImage(), j*20, i*20);
-                    
                 }
             }
         }
+    }
+
+    public boolean checkColision(int height, int width) {
+        return true;
     }
 }
