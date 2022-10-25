@@ -3,84 +3,63 @@ package gameObject;
 import tileMap.*;
 import gremlins.*;
 
+import java.util.*;
+import java.io.*;
+
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.data.JSONObject;
 import processing.data.JSONArray;
 
 
+/**
+ * Class to manage gremlins, extends the Character class
+ */
 public class Enemy extends Character {
 
-    private char name;
-    private char[][] charMap;
+    Random ran = new Random();
+    int dir = ran.nextInt(4);
 
-    private PImage projectile;
     private PImage character;
 
-    private int playerX;
-    private int playerY;
+    /**
+     * Class constructor
+     *
+     * @param name name on the level
+     * @param charMap 2d char array
+     * @param projectile PImage of the projectile associated with the name
+     * @param character PImage of the character
+     * @param x current x coordinate
+     * @param y current y coordinate
+     * @param speed amount of pixels moved per second
+     */
+    public Enemy(char name, char[][] charMap, PImage projectile, PImage character, int x, int y, int speed) {
+        super(name, charMap, projectile, character, x, y, speed);
 
-    public Enemy(char name, char[][] charMap, PImage projectile, PImage character) {
-        super(name, charMap, projectile, character);
-
-        this.name = name;
-        this.charMap = charMap;
-        this.projectile = projectile;
         this.character = character;
     }
 
-    public char findLongestSpaceDir() {
-        // returns direction of the path with the longest white space in charMap
-
-        int currentLongest = 0;
-        int longest = 0;
-
-        playerX = super.getPlayerX();
-        playerY = super.getPlayerX();
-
-        int i = 0;
-        // Check the right
-        while (charMap[playerY][playerX + i] == ' ') {
-            currentLongest++;
-            i++;
-        }
-        if (currentLongest > longest) {
-            longest = currentLongest;
-        }
-        // Check the left
-        i = 0;
-        currentLongest = 0;
-        while (charMap[playerY][playerX - i] == ' ') {
-            currentLongest++;
-            i++;
-        }
-        if (currentLongest > longest) {
-            longest = currentLongest;
-        }
-        // Check the top
-        while (charMap[playerY+i][playerX] == ' ') {
-            currentLongest++;
-            i++;
-        }
-        if (currentLongest > longest) {
-            longest = currentLongest;
-        }
-        // Check below
-        i = 0;
-        currentLongest = 0;
-        while (charMap[playerY-i][playerX] == ' ') {
-            currentLongest++;
-            i++;
-        }
-        if (currentLongest > longest) {
-            longest = currentLongest;
-        }
-
-        return 'd';
-    }
-
+    /**
+     * Decides which direction to move the gremlin
+     */
     public void decideMove() {
 
+        Random ran = new Random();
+        int dir = ran.nextInt(4);
+        if (!super.validMove()) {
+            dir = ran.nextInt(4);
+        }
+
+
+        if (dir == 0) {
+            super.right(this.character);
+        } else if (dir == 2) {
+            super.left(this.character); 
+        } else if (dir == 3) {
+            super.up(this.character); 
+        } else {
+            super.down(this.character); 
+        }
     }
 }
 

@@ -6,7 +6,7 @@ import gameObject.*;
 
 import gameObject.Character;
 import gameObject.Enemy;
-import gameObject.Player;
+// import gameObject.Player;
 
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -17,7 +17,9 @@ import processing.event.KeyEvent;
 import java.util.*;
 import java.io.*;
 
-
+/**
+ * app
+ */
 public class App extends PApplet {
 
 	public static final int WIDTH = 720;
@@ -48,10 +50,12 @@ public class App extends PApplet {
     private TileMap currentMap;
 
     private Character player;
-    private Character gremlins;
-    private Character[] gremlinss;
+    private Enemy[] gremlins = {};
+    private Shoot[] projectiles = {};
 
-    int i = 0;
+    private int fireballChargeTimer = 0;
+    private boolean fireballRecharging = false;
+
 
     public App() {
         this.configPath = "config.json";
@@ -101,16 +105,26 @@ public class App extends PApplet {
         currentCharMap = currentMap.getCharMap();
 
         // Load the wizard
-        player = new Character('W', currentCharMap, fireball, wizardRight);
-
-        gremlins = new Enemy('G',currentCharMap, slime, gremlin);
-
+        // player = new Character('W', currentCharMap, fireball, wizardRight);
 
         // Load the gremlins
+        for (int i = 0; i < currentCharMap.length; i++) {
+            for (int j = 0; j < currentCharMap[i].length; j++) {
+                if (currentCharMap[i][j] == 'G') {
+                    gremlins = Arrays.copyOf(gremlins, gremlins.length + 1);
+                    gremlins[gremlins.length - 1] = new Enemy('G', currentCharMap, slime, gremlin, j, i, 1);
+                }
+                if (currentCharMap[i][j] == 'W') {
+                    player = new Character('W', currentCharMap, fireball, wizardRight, j, i, 2);
+                }
+            }
+        }
     }
 
     /**
      * Receive key pressed signal from the keyboard.
+     *
+     * @param e integer code of the key pressed
     */
     public void keyPressed(KeyEvent e){
 
@@ -125,7 +139,11 @@ public class App extends PApplet {
         } else if (key == 40) { // down
             player.down(wizardDown);
         } else if (key == ' ') {
-            player.shoot();
+            if (!fireballRecharging) {
+                projectiles = Arrays.copyOf(projectiles, projectiles.length + 1);
+                projectiles[projectiles.length - 1] = new Shoot(fireball, player.getDirection(), currentCharMap, player.getPlayerX(), player.getPlayerY());
+                fireballRecharging = true;
+            }
         }
     }
 
@@ -149,14 +167,35 @@ public class App extends PApplet {
         image(wizardLeft, 90, 685);
         image(wizardLeft, 110, 685);
 
+        currentMap.tick(this, currentCharMap);
+        player.tick(this);
 
-        // Draw map
+        for (int i = 0; i < gremlins.length; i++) {
+            gremlins[i].tick(this);
+        }
 
-        currentMap.draw(this);
-        player.tick(this, i);
-        // gremlins.draw(this);
 
-        i++;
+
+        for (int i = 0; i < projectiles.length; i++) {
+            projectiles[i].tick(this);
+        }
+
+        fill(255);
+        rect(620, 680, 80, 5);
+
+        fill(0);
+        rect(620,680,4*fireballChargeTimer,5);
+
+        if (fireballRecharging) {
+            fireballChargeTimer++;
+            if (fireballChargeTimer > 20 ) {
+                fireballChargeTimer = 0;
+                fireballRecharging = false;
+            }
+        }
+
+
+
     }
 
     public static void main(String[] args) {
