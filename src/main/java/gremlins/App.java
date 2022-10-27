@@ -89,8 +89,16 @@ public class App extends PApplet {
 
         JSONObject conf = loadJSONObject(new File(this.configPath));
 
-        String text1 = "level1.txt";
-        String text2 = "level2.txt";
+        JSONArray levels = new JSONArray();
+
+        levels = conf.getJSONArray("levels");
+
+        JSONObject level1 = levels.getJSONObject(0);
+        JSONObject level2 = levels.getJSONObject(1);
+
+        String text1 = level1.get("layout").toString();
+        String text2 = level2.get("layout").toString();
+
         map1 = new TileMap(text1, stonewall, brickwall);
         map2 = new TileMap(text2, stonewall, brickwall);
 

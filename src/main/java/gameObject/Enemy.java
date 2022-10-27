@@ -17,8 +17,8 @@ import processing.data.JSONArray;
  */
 public class Enemy extends Character {
 
-    Random ran = new Random();
-    int dir = ran.nextInt(4);
+    private Random ran = new Random();
+    private int dir = ran.nextInt(4);
 
     private PImage character;
 
